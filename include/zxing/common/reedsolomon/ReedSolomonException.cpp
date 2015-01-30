@@ -1,10 +1,9 @@
-#ifndef __EDGEDETECTOR_H__
-#define __EDGEDETECTOR_H__
 /*
- *  EdgeDetector.h
+ *  ReedSolomonException.cpp
  *  zxing
  *
- *  Copyright 2010 ZXing authors All rights reserved.
+ *  Created by Christian Brunschen on 06/05/2008.
+ *  Copyright 2008 Google UK. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +18,13 @@
  * limitations under the License.
  */
 
-
-
-#include <vector>
-#include <zxing/common/BitMatrix.h>
-#include <zxing/common/Point.h>
+#include <zxing/common/reedsolomon/ReedSolomonException.h>
 
 namespace zxing {
-namespace EdgeDetector {
-
-void findEdgePoints(std::vector<Point>& points, const BitMatrix& image, Point start, Point end, bool invert, int skip, float deviation);
-Line findLine(const BitMatrix& image, Line estimate, bool invert, int deviation, float threshold, int skip);
-
-Point intersection(Line a, Line b);
+ReedSolomonException::ReedSolomonException(const char *msg) throw() :
+    Exception(msg) {
+}
+ReedSolomonException::~ReedSolomonException() throw() {
+}
 
 }
-}
-#endif /* EDGEDETECTOR_H_ */

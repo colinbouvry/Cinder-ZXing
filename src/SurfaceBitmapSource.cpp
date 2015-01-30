@@ -2,7 +2,7 @@
 
 namespace zxing {
     
-    SurfaceBitmapSource::SurfaceBitmapSource(ci::Surface& pixels) : image_(pixels) {
+    SurfaceBitmapSource::SurfaceBitmapSource(ci::Surface& pixels) : image_(pixels), LuminanceSource(pixels.getWidth(), pixels.getHeight()) {
         width = pixels.getWidth();
         height = pixels.getHeight();
         pixel_cache = pixels.getData();
@@ -28,9 +28,9 @@ namespace zxing {
         return height;
     }
     
-    unsigned char* SurfaceBitmapSource::getRow(int y, unsigned char* row) {
+    ArrayRef<char> SurfaceBitmapSource::getRow(int y, ArrayRef<char> row) const {
         if (row == NULL) {
-            row = new unsigned char[width];
+            row = ArrayRef<char>(width);
         }
         for (int x = 0; x < width; x++) {
             const unsigned char* p = &pixel_cache[3 * (y * width + x)];
@@ -43,23 +43,24 @@ namespace zxing {
         
     }
     
-    unsigned char* SurfaceBitmapSource::getMatrix() {
+    ArrayRef<char> SurfaceBitmapSource::getMatrix() const {
         int width = getWidth();
         int height =  getHeight();
-        unsigned char* matrix = new unsigned char[width*height];
-        unsigned char* m = matrix;
+        ArrayRef<char> matrix = ArrayRef<char>(width*height);
+        //ArrayRef<char> m = matrix;
         const unsigned char* p = pixel_cache;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                *m= (unsigned char)((
+                matrix[y*width + x] = (unsigned char)((
                                      306 * (int)(*p++) +
                                      601 * (int)(*p++) +
                                      117 * (int)(*p++) + 0x200) >> 10);
-                m++;
+                //m++;
             }
         }
         return matrix;
     }
+
     
     bool SurfaceBitmapSource::isRotateSupported() const {
         return false;

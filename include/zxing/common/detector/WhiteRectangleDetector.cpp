@@ -21,17 +21,20 @@
 
 #include <zxing/NotFoundException.h>
 #include <zxing/common/detector/WhiteRectangleDetector.h>
-#include <zxing/common/detector/math_utils.h>
+#include <zxing/common/detector/MathUtils.h>
 #include <sstream>
 
-namespace math_utils = zxing::common::detector::math_utils;
+using std::vector;
+using zxing::Ref;
+using zxing::ResultPoint;
+using zxing::WhiteRectangleDetector;
+using zxing::common::detector::MathUtils;
 
-namespace zxing {
-using namespace std;
+// VC++
+using zxing::BitMatrix;
 
 int WhiteRectangleDetector::INIT_SIZE = 30;
 int WhiteRectangleDetector::CORR = 1;
-
 
 WhiteRectangleDetector::WhiteRectangleDetector(Ref<BitMatrix> image) : image_(image) {
   width_ = image->getWidth();
@@ -225,16 +228,18 @@ std::vector<Ref<ResultPoint> > WhiteRectangleDetector::detect() {
   }
 }
 
-Ref<ResultPoint> WhiteRectangleDetector::getBlackPointOnSegment(float aX, float aY, float bX, float bY) {
-  int dist = math_utils::round(math_utils::distance(aX, aY, bX, bY));
+Ref<ResultPoint>
+WhiteRectangleDetector::getBlackPointOnSegment(int aX_, int aY_, int bX_, int bY_) {
+  float aX = float(aX_), aY = float(aY_), bX = float(bX_), bY = float(bY_);
+  int dist = MathUtils::round(MathUtils::distance(aX, aY, bX, bY));
   float xStep = (bX - aX) / dist;
   float yStep = (bY - aY) / dist;
 
   for (int i = 0; i < dist; i++) {
-    int x = math_utils::round(aX + i * xStep);
-    int y = math_utils::round(aY + i * yStep);
+    int x = MathUtils::round(aX + i * xStep);
+    int y = MathUtils::round(aY + i * yStep);
     if (image_->get(x, y)) {
-      Ref<ResultPoint> point(new ResultPoint(x, y));
+      Ref<ResultPoint> point(new ResultPoint(float(x), float(y)));
       return point;
     }
   }
@@ -275,7 +280,7 @@ vector<Ref<ResultPoint> > WhiteRectangleDetector::centerEdges(Ref<ResultPoint> y
   float tj = t->getY();
 
   std::vector<Ref<ResultPoint> > corners(4);
-  if (yi < (float)width_/2) {
+  if (yi < (float)width_/2.0f) {
     Ref<ResultPoint> pointA(new ResultPoint(ti - CORR, tj + CORR));
     Ref<ResultPoint> pointB(new ResultPoint(zi + CORR, zj + CORR));
     Ref<ResultPoint> pointC(new ResultPoint(xi - CORR, xj - CORR));
@@ -322,5 +327,4 @@ bool WhiteRectangleDetector::containsBlackPoint(int a, int b, int fixed, bool ho
   }
 
   return false;
-}
 }
