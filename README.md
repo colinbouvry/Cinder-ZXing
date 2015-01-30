@@ -5,8 +5,11 @@ Cinder Block integrating ZXing and Cinder. Precompiled ZXing static libraries fo
 
 It's a fork of dawidgorny/Cinder-ZXing
 
+zxing lib:
 
 http://code.google.com/p/zxing/
+
+Version of zxing used :
 
 https://github.com/zxing/zxing/tree/00f634024ceeee591f54e6984ea7dd666fab22ae/cpp
 
